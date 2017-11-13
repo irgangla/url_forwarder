@@ -1,0 +1,10 @@
+
+{
+  "name": "eu.irgang.url_forwarder",
+  "description": "URL Forwarder (native host)",
+  "path": "D:\\skill\\chrome\\UrlForwarder\\host\\url_forwarder_host.exe",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://jnjngccjejfffehfmlgmelgmadnecolb/"
+  ]
+}

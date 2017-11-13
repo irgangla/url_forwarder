@@ -1,0 +1,6 @@
+[package]
+name = "url_forwarder_host"
+version = "0.1.0"
+authors = ["Thomas Irgang <thomas@irgang-la.de>"]
+
+[dependencies]

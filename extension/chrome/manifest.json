@@ -1,0 +1,23 @@
+{
+    "name": "URL Forwarder",
+    
+    "version": "0.1",
+  
+    "background": {
+        "scripts": ["background.js"]
+    },
+    
+    "permissions": 
+    [
+        "nativeMessaging",
+        "tabs",
+        "background",
+        "webRequest", 
+        "<all_urls>",
+        "webRequestBlocking",
+        "<all_urls>",
+        "storage"
+    ],
+  
+    "manifest_version": 2
+}
