@@ -29,7 +29,7 @@ function callForwarder(url) {
 }
 
 function answerHandler(response) {
-    console.log("Received from native: " + response);
+    console.log("Received from native: " + JSON.stringify(response));
 }
 
 function blockUrl(url) {
