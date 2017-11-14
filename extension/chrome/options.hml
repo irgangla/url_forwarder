@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8"/>
+    <script src='options.js'></script>
+    <title>URL Forwarder</title>
+  </head>
+  <body>
+    <div>
+      <table>
+        <tr>
+          <td><div style="vertical-align: middle; text-align: center; padding: 10px;"><img src="icon.png"></div></td>
+          <td><div style="vertical-align: middle; text-align: center; padding: 10px;"><h1>URL Forwarder</h1></div></td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <h2>Rules:</h2>
+      <table id=rules>
+        <tr>
+          <th>Enabled</th>
+          <th>URL Pattern</th>
+          <th>Target</th>
+          <th>Action</th>
+          <th>Delete</th>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <h2>Add Rule:</h2>
+      <table>
+        <tr>
+          <td style="padding: 5px;">URL Pattern:</label></td>
+          <td><input type=text id=pattern></td>
+        </tr>
+        <tr>
+          <td style="padding: 5px;">Target:</label></td>
+          <td><input type=text id=target></td>
+        </tr>
+        <tr>
+          <td style="padding: 5px;">Action:</label></td>
+          <td>dropdown</td>
+        </tr>
+      </table>
+      <button id=add>Add rule</button>
+    </div>
+  </body>
+</html>
