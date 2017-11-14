@@ -22,7 +22,7 @@ function callForwarder(url) {
     api.runtime.sendNativeMessage(
         'eu.irgang.url_forwarder',
         {
-            text: url
+            url: url
         },
         answerHandler
     );
