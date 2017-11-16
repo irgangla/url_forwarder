@@ -30,7 +30,7 @@
     [
         "nativeMessaging",
         "tabs",
-        "background",
+        "<all_urls>",
         "webRequest", 
         "<all_urls>",
         "webRequestBlocking",
