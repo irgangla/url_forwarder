@@ -6,11 +6,12 @@ use std::mem::transmute;
 
 use serde_json::{Value, Error};
 
-fn parse_data(data: &mut String, url: &mut String) -> Result<(), Error> {
+fn parse_data(data: &mut String, url: &mut String, target: &mut String) -> Result<(), Error> {
     // Parse the string of data into serde_json::Value.
     let v: Value = serde_json::from_str(data)?;
     
     url.push_str(v["url"].as_str().unwrap_or(&"url parse error"));
+    target.push_str(v["target"].as_str().unwrap_or(&"target parse error"));
 
     Ok(())
 }
@@ -72,12 +73,12 @@ fn read_data(data: &mut Vec<u8>) -> Option<usize> {
     Some(data.len())
 }
 
-fn read_message(content: &mut String) -> Option<usize> {
+fn read_message(url: &mut String, target: &mut String) -> Option<usize> {
     if let Ok(promised_len) = read_len() {
         let mut data = vec![0u8; promised_len];
         if let Some(len) = read_data(&mut data) {
             if let Ok(mut text) = String::from_utf8(data) {
-                match parse_data(&mut text, content) {
+                match parse_data(&mut text, url, target) {
                     Ok(_) => {},
                     Err(_) => content.push_str(&"parse error"),
                 }
@@ -92,13 +93,14 @@ fn read_message(content: &mut String) -> Option<usize> {
 
 fn main() {
     let mut result = ProcessResult::Ok;
-    let mut content = String::new();
-    let desc = match read_message(&mut content) {
+    let mut url = String::new();
+    let mut target = String::new();
+    let desc = match read_message(&mut url, &mut target) {
         Some(l) => {
             if l == 0 {
                 result = ProcessResult::Invalid;    
             }
-            format!("{} - {}", l, content)
+            format!("{}, {}", url, target)
         },
         None => {
             result = ProcessResult::Err;

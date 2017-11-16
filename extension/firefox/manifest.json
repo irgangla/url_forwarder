@@ -32,9 +32,7 @@
         "tabs",
         "<all_urls>",
         "webRequest", 
-        "<all_urls>",
         "webRequestBlocking",
-        "<all_urls>",
         "storage"
     ],
   
