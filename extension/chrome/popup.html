@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8"/>
+    <script src='popup.js'></script>
+    <title>JIRA Attachment Downloader</title>
+  </head>
+  <body>
+    <div>
+      <table>
+        <tr>
+          <td><div style="vertical-align: middle; text-align: center; padding: 10px;"><img src="icon.png"></div></td>
+          <td><div style="vertical-align: middle; text-align: center; padding: 10px;"><h1>JIRA Attachment Downloader</h1></div></td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <table>
+        <tr>
+          <td style="padding: 5px;"><label for=domain>Page:</label></td>
+          <td><input type=text id=domain disabled></td>
+          <td><input type=text id=ticket disabled></td>
+        </tr>
+        <tr>
+          <td style="padding: 5px;"><label for=external>External Attachment:</label></td>
+          <td><input type=text id=external placeholder=External></td>
+        </tr>
+        <tr>
+          <td style="padding: 5px;"><label for=filter>Filter:</label></td>
+          <td><input type=text id=filter placeholder=Filter></td>
+          <td><input type=checkbox id=regex>Regular Expression</td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <button id=download0>Download</button>
+      <table id=links>
+        <tr>
+          <th><input type=checkbox checked id=toggle_all></th>
+          <th align=left>Attachments</th>
+        </tr>
+      </table>
+      <button id=download1>Download</button>
+    </div>
+  </body>
+</html>

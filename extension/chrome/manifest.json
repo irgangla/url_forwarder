@@ -1,13 +1,24 @@
 {
     "name": "URL Forwarder",
     
-    "version": "0.1",
+    "description": "Redirect, block and do native processing of links.",
+    
+    "version": "1.0",
   
+    "browser_action": {
+        "browser_style": true,
+        "default_popup": "popup.html"
+        //"default_icon": "icon.png"
+    },
+    
     "background": {
         "scripts": ["background.js"]
     },
     
-    "options_page": "options.html",
+     "options_ui": {
+        "page": "options.html",
+        "chrome_style": true
+     },
     
     "permissions": 
     [

@@ -1,8 +1,8 @@
 /*! 
  *  \brief     URL Forwarder
- *  \details   This extension allows forwarding URL to other local applications instead of opening.
+ *  \details   This extension allows redirection, forwarding and native handling of links.
  *  \author    Thomas Irgang
- *  \version   0.1
+ *  \version   1.0
  *  \date      2017
  *  \copyright MIT License
  Copyright 2017 Thomas Irgang
@@ -16,13 +16,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 var api = chrome;
 
+var rules;
+
 var currentTabUrl = null;
 
-function callForwarder(url) {
+
+function callForwarder(url, rule) {
     api.runtime.sendNativeMessage(
         'eu.irgang.url_forwarder',
         {
-            url: url
+            "url": url,
+            "target": rule.target
         },
         answerHandler
     );
@@ -32,39 +36,54 @@ function answerHandler(response) {
     console.log("Received from native: " + JSON.stringify(response));
 }
 
-function blockUrl(url) {
-    if(url) {
-        return url.indexOf("://jira.elektrobit.com/browse/") != -1;
+function findRule(url) {
+    var matching_rules = rules.filter(function(rule) {
+        return url.match(rule.pattern);
+    });
+    
+    if(matching_rules.length > 1) {
+        console.log("More than one rule match, using fist one.");
+        return matching_rules[0];
+    } else if(matching_rules.length == 1) {
+        return matching_rules[0];
     }
-    return false;
+    return null;
 }
 
 function checkUrl(details) {
     if(details) {
         var url = details.url;
         if(url) {
-            var block = blockUrl(url);
-            if(block) {
-                console.log("URL " + url + " is blocked!");
-                callForwarder(url);
-                if(currentTabUrl) {
-                    console.log("redirect to " + currentTabUrl);
-                    return {redirectUrl: currentTabUrl};
+            var rule = findRule(url);
+            if(rule) {
+                callForwarder(url, rule);
+                if(rule.action == 0) {
+                    console.log("action: stay");
+                    if(currentTabUrl) {
+                        console.log("Redirect to " + currentTabUrl);
+                        return {redirectUrl: currentTabUrl};
+                    } else {
+                        console.log("No current tab, block instead.");
+                        return {cancel: true};
+                    }
+                } else if(rule.action == 1) {
+                    console.log("action: block");
+                    return {cancel: true};
                 } else {
-                    console.log("block URL");
-                    return {cancel: block};
+                    console.log("action: redirect");
+                    if(rule.redirect) {
+                        console.log("Redirect to " + rule.redirect);
+                        return {redirectUrl: rule.redirect};
+                    } else {
+                        console.log("No redirect URL, block instead.");
+                        return {cancel: true};
+                    }
                 }
             }
         }
     }
     return {cancel: false};
 }
-
-api.webRequest.onBeforeRequest.addListener(
-    checkUrl,
-    {urls: ["<all_urls>"]},
-    ["blocking"]
-);
 
 function activeTabChanged(activeInfo) {
     if(activeInfo) {
@@ -88,11 +107,43 @@ function getCurrentTabUrl() {
                 var url = tab.url;
                 if(url) {
                     currentTabUrl = url;
-                    console.log("Current tab: " + url);
                 }                
             }
         }
     });
 }
 
+function loadRules() {
+    console.log("Load rules");
+    api.storage.sync.get("rules", (data) => {
+        var loaded = api.runtime.lastError ? [] : data["rules"];
+        rules = loaded.filter(function(rule) {
+            return rule.enabled;
+        });
+        console.log("Loaded rules: " + JSON.stringify(rules));
+    });
+}
+
+api.runtime.onMessage.addListener(function(msg) {
+    if(msg) {
+        if(msg.kind == "rules_updated") {
+            var rec = msg.rules;
+            rules = rec.filter(function(rule) {
+                return rule.enabled;
+            });
+            console.log("Received rules: " + JSON.stringify(rules));
+        }
+    }
+});
+
 api.tabs.onActivated.addListener(activeTabChanged);
+
+api.webRequest.onBeforeRequest.addListener(
+    checkUrl,
+    {urls: ["<all_urls>"]},
+    ["blocking"]
+);
+
+loadRules();
+
+console.log("Background job started.");
