@@ -70,6 +70,9 @@ function loadRules() {
     console.log("Load rules");
     api.storage.sync.get("rules", (data) => {
         var loaded = api.runtime.lastError ? [] : data["rules"];
+        if(!loaded) {
+            loaded = [];
+        }
         rules = loaded.filter(function(rule) {
             return rule.enabled;
         });

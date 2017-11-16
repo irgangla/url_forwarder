@@ -183,6 +183,9 @@ function loadRules() {
     console.log("load rules");
     api.storage.sync.get("rules", (data) => {
         rules = api.runtime.lastError ? [] : data["rules"];
+        if(!rules) {
+            rules = [];
+        }
         console.log("Loaded rules: " + JSON.stringify(rules));
         renderRules();
     });
