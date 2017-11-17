@@ -1,25 +1,39 @@
 <!DOCTYPE html>
-  <head>
-    <meta charset="utf-8"/>
+
+<head>
+    <meta charset="utf-8" />
     <script src='popup.js'></script>
     <title>JIRA Attachment Downloader</title>
-  </head>
-  <body style="padding: 10px;">
+</head>
+
+<body style="padding: 10px;">
     <div>
-      <table>
-        <tr>
-            <td><div style="vertical-align: middle; text-align: center; padding: 10px;"><img src="icon32.png"></div></td>
-            <td><div style="vertical-align: middle; text-align: center; padding: 10px;"><h1>URL Forwarder</h1></div></td>
-            <td><button id="x">X</button></td>
-        </tr>
-      </table>
+        <table>
+            <tr>
+                <td>
+                    <div style="vertical-align: middle; text-align: center; padding: 10px;"><img src="icon32.png"></div>
+                </td>
+                <td>
+                    <div style="vertical-align: middle; text-align: center; padding: 10px;">
+                        <h1>URL Forwarder</h1>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: right;">
+                    <button id="x">Close</button>
+                    <button id="release">Release</button>
+                </td>
+            </tr>
+        </table>
     </div>
     <div>
-      <table id=links>
-        <tr>
-          <th align=left>Affected links:</th>
-        </tr>
-      </table>
+        <table id=links>
+            <tr>
+                <th align=left>Affected links:</th>
+            </tr>
+        </table>
     </div>
-  </body>
+</body>
+
 </html>

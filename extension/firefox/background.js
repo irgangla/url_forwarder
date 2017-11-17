@@ -20,14 +20,22 @@ var api = browser;
 var rules;
 /*! URL of current tab. */
 var currentTabUrl = null;
+/*! last forwarded URL */
+var last_url = "";
 
 /*! Forward url and target to native component. */
 function callForwarder(url, rule) {
+    if (url == last_url) {
+        console.log("URL was already forwarded: " + url);
+        return;
+    }
+    last_url = url;
+    console.log("Send native: " + url);
     api.runtime.sendNativeMessage(
-        'eu.irgang.url_forwarder',
-        {
+        'eu.irgang.url_forwarder', {
             "url": url,
-            "target": rule.target
+            "target": rule.target,
+            "args": rule.args
         },
         answerHandler
     );
@@ -40,14 +48,14 @@ function answerHandler(response) {
 
 /*! Search for matching rules. */
 function findRule(url) {
-    var matching_rules = rules.filter(function(rule) {
+    var matching_rules = rules.filter(function (rule) {
         return url.match(rule.pattern);
     });
-    
-    if(matching_rules.length > 1) {
+
+    if (matching_rules.length > 1) {
         console.log("More than one rule match, using fist one.");
         return matching_rules[0];
-    } else if(matching_rules.length == 1) {
+    } else if (matching_rules.length == 1) {
         return matching_rules[0];
     }
     return null;
@@ -55,45 +63,58 @@ function findRule(url) {
 
 /*! Check is response is affected by a rule. */
 function checkUrl(details) {
-    if(details) {
+    if (details) {
         var url = details.url;
-        if(url) {
+        if (url) {
             var rule = findRule(url);
-            if(rule) {
+            if (rule) {
+                console.log("URL match: " + url);
                 callForwarder(url, rule);
-                if(rule.action == 0) {
+                if (rule.action == 0) {
                     console.log("action: stay");
-                    if(currentTabUrl) {
+                    if (currentTabUrl) {
                         console.log("Redirect to " + currentTabUrl);
-                        return {redirectUrl: currentTabUrl};
+                        return {
+                            redirectUrl: currentTabUrl
+                        };
                     } else {
                         console.log("No current tab, block instead.");
-                        return {cancel: true};
+                        return {
+                            cancel: true
+                        };
                     }
-                } else if(rule.action == 1) {
+                } else if (rule.action == 1) {
                     console.log("action: block");
-                    return {cancel: true};
+                    return {
+                        cancel: true
+                    };
                 } else {
                     console.log("action: redirect");
-                    if(rule.redirect) {
+                    if (rule.redirect) {
                         console.log("Redirect to " + rule.redirect);
-                        return {redirectUrl: rule.redirect};
+                        return {
+                            redirectUrl: rule.redirect
+                        };
                     } else {
                         console.log("No redirect URL, block instead.");
-                        return {cancel: true};
+                        return {
+                            cancel: true
+                        };
                     }
                 }
             }
         }
     }
-    return {cancel: false};
+    return {
+        cancel: false
+    };
 }
 
 /*! Callback for tab changed. */
 function activeTabChanged(activeInfo) {
-    if(activeInfo) {
+    if (activeInfo) {
         var tabId = activeInfo.tabId;
-        if(tabId) {
+        if (tabId) {
             getCurrentTabUrl();
         }
     }
@@ -107,13 +128,13 @@ function getCurrentTabUrl() {
     };
 
     api.tabs.query(queryInfo, (tabs) => {
-        if(tabs) {
+        if (tabs) {
             var tab = tabs[0];
-            if(tab) {
+            if (tab) {
                 var url = tab.url;
-                if(url) {
+                if (url) {
                     currentTabUrl = url;
-                }                
+                }
             }
         }
     });
@@ -122,12 +143,12 @@ function getCurrentTabUrl() {
 /*! Load available rules from persistence. */
 function loadRules() {
     console.log("Load rules");
-    api.storage.sync.get("rules", (data) => {
+    api.storage.local.get("rules", (data) => {
         var loaded = api.runtime.lastError ? [] : data["rules"];
-        if(!loaded) {
+        if (!loaded) {
             loaded = [];
         }
-        rules = loaded.filter(function(rule) {
+        rules = loaded.filter(function (rule) {
             return rule.enabled;
         });
         console.log("Loaded rules: " + JSON.stringify(rules));
@@ -135,14 +156,17 @@ function loadRules() {
 }
 
 /*! Register message listener for rule update message. */
-api.runtime.onMessage.addListener(function(msg) {
-    if(msg) {
-        if(msg.kind == "rules_updated") {
+api.runtime.onMessage.addListener(function (msg) {
+    if (msg) {
+        if (msg.kind == "rules_updated") {
             var rec = msg.rules;
-            rules = rec.filter(function(rule) {
+            rules = rec.filter(function (rule) {
                 return rule.enabled;
             });
             console.log("Received rules: " + JSON.stringify(rules));
+        } else if (msg.kind == "release") {
+            console.log("Release URL lock.");
+            last_url = "";
         }
     }
 });
@@ -152,9 +176,9 @@ api.tabs.onActivated.addListener(activeTabChanged);
 
 /*! Register as request listener. */
 api.webRequest.onBeforeRequest.addListener(
-    checkUrl,
-    {urls: ["<all_urls>"]},
-    ["blocking"]
+    checkUrl, {
+        urls: ["<all_urls>"]
+    }, ["blocking"]
 );
 
 //load rules on startup

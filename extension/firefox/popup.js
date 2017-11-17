@@ -29,19 +29,18 @@ function showLinks() {
     var links_table = document.getElementById('links');
 
     // remove old links
-    while (links_table.children.length > 1) 
-    {
+    while (links_table.children.length > 1) {
         links_table.removeChild(links_table.children[links_table.children.length - 1])
     }
-    
+
     // add links
     for (var i = 0; i < visible_links.length; ++i) {
         var row = document.createElement('tr');
         var col_url = document.createElement('td');
-        
+
         col_url.innerText = visible_links[i];
         col_url.style.whiteSpace = 'wrap';
-        
+
         row.appendChild(col_url);
         links_table.appendChild(row);
     }
@@ -49,16 +48,16 @@ function showLinks() {
 
 /*! Search for matching rules. */
 function findRule(url) {
-    var matching_rules = rules.filter(function(rule) {
+    var matching_rules = rules.filter(function (rule) {
         return url.match(rule.pattern);
     });
-    
+
     return (matching_rules.length > 0);
 }
 
 /*! Filter all links. Only show links affected by a rule. */
 function filterLinks() {
-    visible_links = all_links.filter(function(link) {
+    visible_links = all_links.filter(function (link) {
         return findRule(link);
     });
     // update popup
@@ -68,12 +67,12 @@ function filterLinks() {
 /*! Load available rules from persistence. */
 function loadRules() {
     console.log("Load rules");
-    api.storage.sync.get("rules", (data) => {
+    api.storage.local.get("rules", (data) => {
         var loaded = api.runtime.lastError ? [] : data["rules"];
-        if(!loaded) {
+        if (!loaded) {
             loaded = [];
         }
-        rules = loaded.filter(function(rule) {
+        rules = loaded.filter(function (rule) {
             return rule.enabled;
         });
         console.log("Loaded rules: " + JSON.stringify(rules));
@@ -85,12 +84,16 @@ function closePopup() {
     window.close();
 }
 
+function release() {
+    api.runtime.sendMessage({"kind": "release"});
+}
+
 /*! Register message listener for rule update message. */
-api.runtime.onMessage.addListener(function(msg) {
-    if(msg) {
-        if(msg.kind == "rules_updated") {
+api.runtime.onMessage.addListener(function (msg) {
+    if (msg) {
+        if (msg.kind == "rules_updated") {
             var rec = msg.rules;
-            rules = rec.filter(function(rule) {
+            rules = rec.filter(function (rule) {
                 return rule.enabled;
             });
             console.log("Received rules: " + JSON.stringify(rules));
@@ -100,10 +103,10 @@ api.runtime.onMessage.addListener(function(msg) {
 });
 
 /*! Callback for link extraction script. */
-api.runtime.onMessage.addListener(function(msg) {
+api.runtime.onMessage.addListener(function (msg) {
     console.log("Message received.");
-    if(msg) {
-        if(msg.kind == "links") {
+    if (msg) {
+        if (msg.kind == "links") {
             var links = msg.data;
             for (var index in links) {
                 all_links.push(links[index]);
@@ -114,24 +117,27 @@ api.runtime.onMessage.addListener(function(msg) {
     }
 });
 
-
 /*! Init popup. */
-window.onload = function() {
+window.onload = function () {
     document.getElementById("x").onclick = closePopup;
-    
+    document.getElementById("release").onclick = release;
+
     loadRules();
-    
-    setTimeout(function(){
+
+    setTimeout(function () {
         console.log("Query links.");
         // inject link extraction script in all frames of current tab
         api.windows.getCurrent(function (currentWindow) {
             api.tabs.query({
-                    active: true, 
+                    active: true,
                     windowId: currentWindow.id
                 },
-                function(activeTabs) {
+                function (activeTabs) {
                     api.tabs.executeScript(
-                        activeTabs[0].id, {file: 'send_links.js', allFrames: true});
+                        activeTabs[0].id, {
+                            file: 'send_links.js',
+                            allFrames: true
+                        });
                 });
         });
     }, 150);
