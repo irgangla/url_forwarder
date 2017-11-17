@@ -1,112 +1,149 @@
+#[macro_use]
 extern crate serde_json;
 
-use std::io::Read;
-use std::io::{self, Write};
-use std::mem::transmute;
+mod browser {
 
-use serde_json::{Value, Error};
-
-fn parse_data(data: &mut String, url: &mut String, target: &mut String) -> Result<(), Error> {
-    // Parse the string of data into serde_json::Value.
-    let v: Value = serde_json::from_str(data)?;
-    
-    url.push_str(v["url"].as_str().unwrap_or(&"url parse error"));
-    target.push_str(v["target"].as_str().unwrap_or(&"target parse error"));
-
-    Ok(())
-}
-
-
-enum ProcessResult {
-    Ok = 0,
-    Err = 1,
-    Invalid = 2,
-}
-
-fn write_len(l: usize) -> std::result::Result<usize, std::io::Error> {
-    let d = l as u32;
-    let bytes: [u8; 4] = unsafe {
-        transmute(d) // or .to_be()
-    };
-    
-    io::stdout().write(&bytes)
-}
-
-fn write_message(msg: &str) -> std::result::Result<usize, std::io::Error> {
-    write_len(msg.len())?;
-    io::stdout().write(String::from(msg).as_bytes())
-}
-
-fn send_message(url: &str, target: &str, result: ProcessResult, desc: &str) {
-    let rc = result as u8;
-    let msg = format!("{{\"url\": \"{}\", \"target\": \"{}\", \"result\": {}, \"desc\": \"{}\"}}", url, target, rc, desc);
-    
-    match write_message(&msg) {
-        Ok(_) => {},
-        Err(e) => eprintln!("{:?}", e),
+    pub struct Call {
+        pub url: String,
+        pub target: String,
+        pub args: String,
     }
-}
 
-fn read_len() -> std::result::Result<usize, std::io::Error> {
-    let mut bytes = [0u8; 4];
-    
-    std::io::stdin().read_exact(&mut bytes)?;
-    
-    let l: u32 = unsafe {
-        transmute(bytes)
-    };
-    
-    Ok(l as usize)
-}
+    pub struct Error {
+        pub error: String,
+        pub is_error: bool,
+    }
 
-fn read_data(data: &mut Vec<u8>) -> Option<usize> {
-    let mut bytes = std::io::stdin().bytes();
-    
-    for i in 0..data.len() {
-        if let Some(Ok(b)) = bytes.next() {
-            data[i] = b;
-        } else {
-            return None;
+    pub struct Message {
+        pub call: Call,
+        pub err: Error,
+    }
+
+    pub mod input {
+        extern crate serde_json;
+
+        use std;
+        use std::io::Read;
+        use std::mem::transmute;
+
+        fn read_size() -> std::result::Result<usize, std::io::Error> {
+            let mut bytes = [0u8; 4];
+            std::io::stdin().read_exact(&mut bytes)?;
+            let l: u32 = unsafe {
+                transmute(bytes)
+            };
+            Ok(l as usize)
+        }
+
+        fn read_bytes() -> Result<Vec<u8>, std::io::Error> {
+            let size = read_size()?;
+
+            let mut data = vec![0u8; size];
+            std::io::stdin().read_exact(&mut data)?;
+            
+            Ok(data)
+        }
+
+        fn read_text() -> String {
+            let error: String = String::from("{\"error\": \"IO error\"}");
+
+            if let Ok(bytes) = read_bytes() {
+                String::from_utf8(bytes).unwrap_or(error)
+            } else {
+                error
+            }
+        }
+
+        pub fn read() -> super::Message {
+            let text = read_text();
+            let mut msg = super::Message{
+                call: super::Call {
+                    url: String::new(),
+                    target: String::new(),
+                    args: String::new(),
+                },
+                err: super::Error {
+                    error: String::new(),
+                    is_error: false,
+                },
+            };
+            
+            if let Ok(m) = serde_json::from_str(&text) {
+                let json: serde_json::Value = m;
+                let url = String::from(json["url"].as_str().unwrap_or(&""));
+                let target = String::from(json["target"].as_str().unwrap_or(&""));
+                let args = String::from(json["args"].as_str().unwrap_or(&""));
+                let err = String::from(json["error"].as_str().unwrap_or(&""));
+
+                if err.len() > 0 {
+                    msg.err.error = err;
+                    msg.err.is_error = true;
+                } else {
+                    msg.call.url = url;
+                    msg.call.target = target;
+                    msg.call.args = args;
+                }
+            } else {
+                msg.err.is_error = true;
+                msg.err.error = String::from("JSON parsing error");
+            }
+
+            msg
         }
     }
-    
-    Some(data.len())
-}
 
-fn read_message(url: &mut String, target: &mut String) -> Option<usize> {
-    if let Ok(promised_len) = read_len() {
-        let mut data = vec![0u8; promised_len];
-        if let Some(len) = read_data(&mut data) {
-            if let Ok(mut text) = String::from_utf8(data) {
-                match parse_data(&mut text, url, target) {
-                    Ok(_) => {},
-                    Err(_) => content.push_str(&"parse error"),
-                }
-                
-                return Some(len);
+    pub mod output {
+        extern crate serde_json;
+    
+        use std;
+        use std::io::Write;
+        use std::mem::transmute;
+        
+        fn write_size(l: usize) -> std::result::Result<usize, std::io::Error> {
+            let d = l as u32;
+            let bytes: [u8; 4] = unsafe {
+                transmute(d)
+            };
+            
+            std::io::stdout().write(&bytes)
+        }
+
+        fn write_message(msg: &str) -> std::result::Result<usize, std::io::Error> {
+            write_size(msg.len())?;
+            std::io::stdout().write(String::from(msg).as_bytes())
+        }
+
+        pub fn send(msg: super::Error) {
+            let json: serde_json::Value = json!({
+                "error": msg.is_error,
+                "response": msg.error
+            });
+
+            match write_message(&json.to_string()) {
+                Ok(_) => {},
+                Err(e) => eprintln!("{:?}", e),
             }
         }
     }
-    None
 }
 
+use std::process::Command;
+
+fn start_process(call: browser::Call) -> String {
+    match Command::new(call.target.clone()).arg(call.args.clone()).arg(call.url).spawn() {
+        Ok(_) => String::from(call.target),
+        Err(e) => String::from(format!("{} - {} - {:?}", call.target, call.args, e)),
+    }
+}
 
 fn main() {
-    let mut result = ProcessResult::Ok;
-    let mut url = String::new();
-    let mut target = String::new();
-    let desc = match read_message(&mut url, &mut target) {
-        Some(l) => {
-            if l == 0 {
-                result = ProcessResult::Invalid;    
-            }
-            format!("{}, {}", url, target)
-        },
-        None => {
-            result = ProcessResult::Err;
-            String::from("-1")
-        }
-    };
-    
-    send_message("", "", result, &desc);
+    let msg = browser::input::read();
+    let call = msg.call;
+    let mut err = msg.err;
+
+    if !err.is_error {
+        err.error = start_process(call);
+    }
+
+    browser::output::send(err);
 }

@@ -26,6 +26,7 @@ function updateRule() {
     rules[index].enabled = document.getElementById('rule_enabled_' + index).checked;
     rules[index].pattern = document.getElementById('rule_pattern_' + index).value;
     rules[index].target = document.getElementById('rule_target_' + index).value;
+    rules[index].args = document.getElementById('rule_args_' + index).value;
     rules[index].action = document.getElementById('rule_action_' + index).value;
     rules[index].redirect = document.getElementById('rule_redirect_' + index).value;
     
@@ -70,6 +71,7 @@ function renderRules() {
         col_enabled.style = 'text-align: center;';
         var col_pattern = document.createElement('td');
         var col_target = document.createElement('td');
+        var col_args = document.createElement('td');
         var col_action = document.createElement('td');
         var col_redirect = document.createElement('td');
         var col_delete = document.createElement('td');
@@ -95,6 +97,13 @@ function renderRules() {
         text_target.id = 'rule_target_' + i;
         col_target.appendChild(text_target);
         row.appendChild(col_target);
+        
+        var text_args = document.createElement('input');
+        text_args.value = rule.args;
+        text_args.type = 'input';
+        text_args.id = 'rule_args_' + i;
+        col_args.appendChild(text_args);
+        row.appendChild(col_args);
         
         var option_action = document.createElement('select');
         option_action.id = 'rule_action_' + i;
@@ -158,6 +167,7 @@ function addRule() {
     rule.enabled = true;
     rule.pattern = document.getElementById('pattern').value;
     rule.target = document.getElementById('target').value;
+    rule.args = document.getElementById('arguments').value;
     rule.action = document.getElementById('action').value;
     rule.redirect = document.getElementById('redirect').value;
     
@@ -181,7 +191,7 @@ function actionChanged() {
 /*! Load rules from browser persistence. */
 function loadRules() {
     console.log("load rules");
-    api.storage.sync.get("rules", (data) => {
+    api.storage.local.get("rules", (data) => {
         rules = api.runtime.lastError ? [] : data["rules"];
         if(!rules) {
             rules = [];
@@ -196,7 +206,7 @@ function saveRules() {
     console.log("Save rules");
     var data = {};
     data["rules"] = rules;
-    api.storage.sync.set(data, () => {
+    api.storage.local.set(data, () => {
         if(api.runtime.lastError) {
             console.log("Save error!");
         } else {
