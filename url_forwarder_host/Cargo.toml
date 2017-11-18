@@ -1,7 +1,97 @@
 [package]
 name = "url_forwarder_host"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Thomas Irgang <thomas@irgang-la.de>"]
+
+# A short blurb about the package. This is not rendered in any format when
+# uploaded to crates.io (aka this is not markdown).
+description = "Native messaging host for UrlForwarder extension (Firefox and Chrome)."
+
+# These URLs point to more information about the package. These are
+# intended to be webviews of the relevant data, not necessarily compatible
+# with VCS tools and the like.
+#documentation = "..."
+#homepage = "..."
+repository = "https://github.com/irgangla/url_forwarder"
+
+# This points to a file under the package root (relative to this `Cargo.toml`).
+# The contents of this file are stored and indexed in the registry.
+# crates.io will render this file and place the result on the crate's page.
+readme = "README.md"
+
+# This is a list of up to five keywords that describe this crate. Keywords
+# are searchable on crates.io, and you may choose any words that would
+# help someone find this crate.
+#keywords = ["...", "..."]
+
+# This is a list of up to five categories where this crate would fit.
+# Categories are a fixed list available at crates.io/category_slugs, and
+# they must match exactly.
+#categories = ["...", "..."]
+
+# This is a string description of the license for this package. Currently
+# crates.io will validate the license provided against a whitelist of known
+# license identifiers from http://spdx.org/licenses/. Multiple licenses can be
+# separated with a `/`.
+license = "MIT"
+
+# If a project is using a nonstandard license, then this key may be specified in
+# lieu of the above key and must point to a file relative to this manifest
+# (similar to the readme key).
+#license-file = "LICENSE"
+
+# Optional specification of badges to be displayed on crates.io.
+#
+# - The badges pertaining to build status that are currently available are
+#   Appveyor, CircleCI, GitLab, and TravisCI.
+# - Available badges pertaining to code test coverage are Codecov and
+#   Coveralls.
+# - There are also maintenance-related badges basesed on isitmaintained.com
+#   which state the issue resolution time, percent of open issues, and future
+#   maintenance intentions.
+#
+# If a `repository` key is required, this refers to a repository in
+# `user/repo` format.
+#[badges]
+
+# Appveyor: `repository` is required. `branch` is optional; default is `master`
+# `service` is optional; valid values are `github` (default), `bitbucket`, and
+# `gitlab`; `id` is optional; you can specify the appveyor project id if you 
+# want to use that instead. `project_name` is optional; use when the repository
+# name differs from the appveyor project name.
+#appveyor = { repository = "...", branch = "master", service = "github" }
+
+# Circle CI: `repository` is required. `branch` is optional; default is `master`
+#circle-ci = { repository = "...", branch = "master" }
+
+# GitLab: `repository` is required. `branch` is optional; default is `master`
+#gitlab = { repository = "...", branch = "master" }
+
+# Travis CI: `repository` in format "<user>/<project>" is required.
+# `branch` is optional; default is `master`
+#travis-ci = { repository = "...", branch = "master" }
+
+# Codecov: `repository` is required. `branch` is optional; default is `master`
+# `service` is optional; valid values are `github` (default), `bitbucket`, and
+# `gitlab`.
+#codecov = { repository = "...", branch = "master", service = "github" }
+
+# Coveralls: `repository` is required. `branch` is optional; default is `master`
+# `service` is optional; valid values are `github` (default) and `bitbucket`.
+#coveralls = { repository = "...", branch = "master", service = "github" }
+
+# Is it maintained resolution time: `repository` is required.
+#is-it-maintained-issue-resolution = { repository = "..." }
+
+# Is it maintained percentage of open issues: `repository` is required.
+#is-it-maintained-open-issues = { repository = "..." }
+
+# Maintenance: `status` is required Available options are `actively-developed`,
+# `passively-maintained`, `as-is`, `none`, `experimental`, `looking-for-maintainer`
+# and `deprecated`.
+#maintenance = { status = "..." }
 
 [dependencies]
 serde_json = "1.0"
+
+

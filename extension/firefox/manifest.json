@@ -39,7 +39,7 @@
 
     "applications": {
         "gecko": {
-            "id": "urlforwarderextension@irgang.eu"
+            "id": "{bff638ba-59df-4985-af17-982ef7cf0a53}"
         }
     }
 }

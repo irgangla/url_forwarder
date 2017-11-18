@@ -62,3 +62,4 @@ typings/
 .DS*
 *native-messaging-example*
 *.exe
+*target*
