@@ -13,58 +13,62 @@
     <script src="options.js"></script>
 </head>
 
-<body>
-    <table>
-        <tr>
-            <td>
-                <div style="vertical-align: middle; text-align: center; padding: 10px;"><img src="icon32.png"></div>
-            </td>
-            <td>
-                <h1>URL Forwarder - Settings</h1>
-            </td>
-            <td>
-                <button id=refresh>refresh</button>
-            </td>
-        </tr>
-    </table>
-    <h2>Rules:</h2>
-    <table id=rules>
-        <tr>
-            <th>Enabled</th>
-            <th>Pattern</th>
-            <th>Target</th>
-            <th>Arguments</th>
-            <th>Action</th>
-            <th>Redirekt to</th>
-            <th>Delete</th>
-            <th>Save</th>
-        </tr>
-    </table>
-    <h2>Add Rule:</h2>
-    <table>
-        <tr>
-            <th>Pattern</th>
-            <th>Target</th>
-            <th>Arguments</th>
-            <th>Action</th>
-            <th>Redirekt to</th>
-            <th>Add</th>
-        </tr>
-        <tr>
-            <td><input type=text id=pattern placeholder=Pattern></td>
-            <td><input type=text id=target placeholder=Target></td>
-            <td><input type=text id=arguments placeholder=Arguments></td>
-            <td style="text-align: center">
-                <select id=action>
+<body style="min-width: 400px; padding: 20px;">
+    <div>
+        <table style="width: 100%">
+            <tr>
+                <td style="width: 15%; vertical-align: middle; text-align: center;">
+                    <div style="vertical-align: middle; text-align: center;"><img src="icon32.png"></div>
+                </td>
+                <td style="width: 70% vertical-align: middle; text-align: center;">
+                    <h1>URL Forwarder - Settings</h1>
+                </td>
+                <td style="width: 15%; vertical-align: middle; text-align: center;">
+                    <button id=refresh>refresh</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <h2>Rules:</h2>
+        <table id=rules style="width: 100%">
+            <tr>
+                <th>Enabled</th>
+                <th style="min-width: 100px;">Pattern</th>
+                <th style="min-width: 100px;">Target</th>
+                <th style="min-width: 50px;">Arguments</th>
+                <th>Action</th>
+                <th style="min-width: 100px;">Redirekt to</th>
+                <th>Delete</th>
+                <th>Save</th>
+            </tr>
+        </table>
+        <h2>Add Rule:</h2>
+        <table>
+            <tr>
+                <th style="min-width: 100px;">Pattern</th>
+                <th style="min-width: 100px;">Target</th>
+                <th style="min-width: 50px;">Arguments</th>
+                <th style="max-width: 40px;">Action</th>
+                <th style="min-width: 100px;">Redirekt to</th>
+                <th>Add</th>
+            </tr>
+            <tr>
+                <td><input type=text id=pattern placeholder=Pattern></td>
+                <td><input type=text id=target placeholder=Target></td>
+                <td><input type=text id=arguments placeholder=Arguments></td>
+                <td style="text-align: center">
+                    <select id=action>
                         <option value=0>stay</option>
                         <option value=1>block</option>
                         <option value=2>redirect</option>
                     </select>
-            </td>
-            <td><input type=text id=redirect placeholder="Redirect to" disabled=true></td>
-            <td style="text-align: center"><button id=add>+</button></td>
-        </tr>
-    </table>
+                </td>
+                <td><input type=text id=redirect placeholder="Redirect to" disabled=true></td>
+                <td style="text-align: center"><button id=add>+</button></td>
+            </tr>
+        </table>
+    </div>
 </body>
 
 </html>

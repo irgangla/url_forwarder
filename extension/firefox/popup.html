@@ -3,34 +3,32 @@
 <head>
     <meta charset="utf-8" />
     <script src='popup.js'></script>
-    <title>JIRA Attachment Downloader</title>
+    <title>URL Forwarder</title>
 </head>
 
-<body style="padding: 10px;">
+<body style="min-width: 400px; padding: 20px;">
     <div>
-        <table>
+        <table style="width: 100%">
             <tr>
-                <td>
-                    <div style="vertical-align: middle; text-align: center; padding: 10px;"><img src="icon32.png"></div>
+                <td style="width: 15%; vertical-align: middle; text-align: center;">
+                    <img src="icon32.png">
                 </td>
-                <td>
-                    <div style="vertical-align: middle; text-align: center; padding: 10px;">
-                        <h1>URL Forwarder</h1>
-                    </div>
+                <td style="width: 60%; vertical-align: middle; text-align: center;">
+                    <h1>URL Forwarder</h1>
                 </td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align: right;">
-                    <button id="x">Close</button>
-                    <button id="release">Release</button>
+                <td  style="width: 15%; vertical-align: middle; text-align: center;">
+                    <button id="x">X</button>
                 </td>
             </tr>
         </table>
     </div>
+    <div style="padding-top: 10px; padding-bottom: 10px;">
+        <button id="release">Release last URL</button>
+    </div>
     <div>
         <table id=links>
             <tr>
-                <th align=left>Affected links:</th>
+                <th align=left>Affected URLs on this page:</th>
             </tr>
         </table>
     </div>
