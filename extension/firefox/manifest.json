@@ -3,7 +3,7 @@
 
     "description": "Redirect, block and do native processing of links.",
 
-    "version": "1.0",
+    "version": "1.1",
 
     "browser_action": {
         "browser_style": true,

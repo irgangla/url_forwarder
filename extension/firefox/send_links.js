@@ -2,7 +2,7 @@
  *  \brief     URL Forwarder
  *  \details   This extension allows redirection, forwarding and native handling of links.
  *  \author    Thomas Irgang
- *  \version   1.0
+ *  \version   1.1
  *  \date      2017
  *  \copyright MIT License
  Copyright 2017 Thomas Irgang
@@ -20,9 +20,9 @@ var api = browser;
 var links = [].slice.apply(document.getElementsByTagName('a'));
 
 // Get links
-links = links.map(function(element) {
+links = links.map(function (element) {
     var href = element.href;
-    if(href) {
+    if (href) {
         var hashIndex = href.indexOf('#');
         if (hashIndex >= 0) {
             href = href.substr(0, hashIndex);
@@ -40,14 +40,15 @@ var kBadPrefix = 'javascript';
 for (var i = 0; i < links.length;) {
     if (((i > 0) && (links[i] == links[i - 1])) || (links[i] == '') || (kBadPrefix == links[i].toLowerCase().substr(0, kBadPrefix.length))) {
         links.splice(i, 1);
-    } 
-    else {
+    } else {
         ++i;
     }
 }
 
-if(links) {
+if (links) {
     // Send links to the extension.
-    api.runtime.sendMessage({kind: "links", data: links});
+    api.runtime.sendMessage({
+        kind: "links",
+        data: links
+    });
 }
-

@@ -2,7 +2,7 @@
  *  \brief     URL Forwarder
  *  \details   This extension allows redirection, forwarding and native handling of links.
  *  \author    Thomas Irgang
- *  \version   1.0
+ *  \version   1.1
  *  \date      2017
  *  \copyright MIT License
  Copyright 2017 Thomas Irgang
@@ -29,9 +29,9 @@ function updateRule() {
     rules[index].args = document.getElementById('rule_args_' + index).value;
     rules[index].action = document.getElementById('rule_action_' + index).value;
     rules[index].redirect = document.getElementById('rule_redirect_' + index).value;
-    
+
     saveRules();
-    
+
     console.log(JSON.stringify(rules[index]));
 }
 
@@ -40,8 +40,8 @@ function deleteRule() {
     var index = this.value;
     console.log("Delete rule " + index);
     var new_rules = [];
-    for(var i=0; i<rules.length; i++) {
-        if(i != index) {
+    for (var i = 0; i < rules.length; i++) {
+        if (i != index) {
             new_rules.push(rules[i]);
         }
     }
@@ -55,17 +55,16 @@ function renderRules() {
     var rules_table = document.getElementById('rules');
 
     // remove ruls
-    while (rules_table.children.length > 1) 
-    {
+    while (rules_table.children.length > 1) {
         rules_table.removeChild(rules_table.children[rules_table.children.length - 1])
     }
-    
+
     // add rules
     for (var i = 0; i < rules.length; ++i) {
         var rule = rules[i];
-        
+
         console.log("Render rule" + i + ": " + JSON.stringify(rule));
-        
+
         var row = document.createElement('tr');
         var col_enabled = document.createElement('td');
         col_enabled.style = 'text-align: center;';
@@ -76,70 +75,70 @@ function renderRules() {
         var col_redirect = document.createElement('td');
         var col_delete = document.createElement('td');
         var col_save = document.createElement('td');
-        
+
         var checkbox = document.createElement('input');
         checkbox.checked = rule.enabled;
         checkbox.type = 'checkbox';
         checkbox.id = 'rule_enabled_' + i;
         col_enabled.appendChild(checkbox);
         row.appendChild(col_enabled);
-        
+
         var text_pattern = document.createElement('input');
         text_pattern.value = rule.pattern;
         text_pattern.type = 'input';
         text_pattern.id = 'rule_pattern_' + i;
         col_pattern.appendChild(text_pattern);
         row.appendChild(col_pattern);
-        
+
         var text_target = document.createElement('input');
         text_target.value = rule.target;
         text_target.type = 'input';
         text_target.id = 'rule_target_' + i;
         col_target.appendChild(text_target);
         row.appendChild(col_target);
-        
+
         var text_args = document.createElement('input');
         text_args.value = rule.args;
         text_args.type = 'input';
         text_args.id = 'rule_args_' + i;
         col_args.appendChild(text_args);
         row.appendChild(col_args);
-        
+
         var option_action = document.createElement('select');
         option_action.id = 'rule_action_' + i;
-        
+
         var opt_stay = document.createElement('option');
         opt_stay.innerText = "stay";
         opt_stay.value = 0;
-        if(rule.action == 0) {
+        if (rule.action == 0) {
             opt_stay.selected = true;
         }
         option_action.appendChild(opt_stay);
         var opt_block = document.createElement('option');
         opt_block.innerText = "block";
         opt_block.value = 1;
-        if(rule.action == 1) {
+        if (rule.action == 1) {
             opt_block.selected = true;
         }
         option_action.appendChild(opt_block);
         var opt_redirect = document.createElement('option');
         opt_redirect.innerText = "redirect";
         opt_redirect.value = 2;
-        if(rule.action == 2) {
+        if (rule.action == 2) {
             opt_redirect.selected = true;
         }
         option_action.appendChild(opt_redirect);
-        
+
         col_action.appendChild(option_action);
         row.appendChild(col_action);
-        
+
         var text_redirect = document.createElement('input');
         text_redirect.value = rule.redirect;
         text_redirect.type = 'input';
         text_redirect.id = 'rule_redirect_' + i;
         col_redirect.appendChild(text_redirect);
         row.appendChild(col_redirect);
-        
+
         var btn_delete = document.createElement('button');
         btn_delete.onclick = deleteRule;
         btn_delete.innerText = "X";
@@ -147,7 +146,7 @@ function renderRules() {
         btn_delete.value = i;
         col_delete.appendChild(btn_delete);
         row.appendChild(col_delete);
-        
+
         var btn_save = document.createElement('button');
         btn_save.onclick = updateRule;
         btn_save.innerText = "Save";
@@ -155,7 +154,7 @@ function renderRules() {
         btn_save.value = i;
         col_save.appendChild(btn_save);
         row.appendChild(col_save);
-        
+
         rules_table.appendChild(row);
     }
 }
@@ -170,9 +169,9 @@ function addRule() {
     rule.args = document.getElementById('arguments').value;
     rule.action = document.getElementById('action').value;
     rule.redirect = document.getElementById('redirect').value;
-    
+
     console.log(JSON.stringify(rule));
-    
+
     rules.push(rule);
     renderRules();
     saveRules();
@@ -180,7 +179,7 @@ function addRule() {
 
 /*! Callback for action choice. Set disabled state of redirect text according to used or not. */
 function actionChanged() {
-    if(document.getElementById('action').value == 2) {
+    if (document.getElementById('action').value == 2) {
         document.getElementById('redirect').disabled = false;
     } else {
         document.getElementById('redirect').disabled = true;
@@ -193,7 +192,7 @@ function loadRules() {
     console.log("load rules");
     api.storage.local.get("rules", (data) => {
         rules = api.runtime.lastError ? [] : data["rules"];
-        if(!rules) {
+        if (!rules) {
             rules = [];
         }
         console.log("Loaded rules: " + JSON.stringify(rules));
@@ -207,23 +206,26 @@ function saveRules() {
     var data = {};
     data["rules"] = rules;
     api.storage.local.set(data, () => {
-        if(api.runtime.lastError) {
+        if (api.runtime.lastError) {
             console.log("Save error!");
         } else {
             console.log("Rules saved.");
         }
-        api.runtime.sendMessage({"kind": "rules_updated", "rules": rules});
+        api.runtime.sendMessage({
+            "kind": "rules_updated",
+            "rules": rules
+        });
     });
 }
 
 /*! Setup page and callbacks. */
 function setup() {
     loadRules();
-    
+
     document.getElementById('add').onclick = addRule;
     document.getElementById('action').onchange = actionChanged;
     document.getElementById('refresh').onclick = loadRules;
-    
+
     console.log("Options loaded.");
 }
 

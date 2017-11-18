@@ -2,7 +2,7 @@
  *  \brief     URL Forwarder
  *  \details   This extension allows redirection, forwarding and native handling of links.
  *  \author    Thomas Irgang
- *  \version   1.0
+ *  \version   1.1
  *  \date      2017
  *  \copyright MIT License
  Copyright 2017 Thomas Irgang
