@@ -134,8 +134,8 @@ fn start_process(call: browser::Call) -> String {
         return String::from(format!("No target. URL: {}", call.url));
     }
 
-    match Command::new(call.target.clone()).arg(call.args.clone()).arg(call.url).spawn() {
-        Ok(_) => String::from(call.target),
+    match Command::new(call.target.clone()).arg(call.args.clone()).arg(call.url.clone()).spawn() {
+        Ok(_) => String::from(format!("{} {} {}", call.target, call.args, call.url)),
         Err(e) => String::from(format!("{} - {} - {:?}", call.target, call.args, e)),
     }
 }

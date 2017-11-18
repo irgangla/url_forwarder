@@ -1,7 +1,7 @@
 {
     "name": "eu.irgang.url_forwarder",
     "description": "URL Forwarder (native host)",
-    "path": "url_forwareder_host.exe",
+    "path": "url_forwarder_host.exe",
     "type": "stdio",
     "allowed_extensions": [
         "{bff638ba-59df-4985-af17-982ef7cf0a53}"
