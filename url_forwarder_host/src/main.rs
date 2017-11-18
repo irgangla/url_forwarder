@@ -130,6 +130,10 @@ mod browser {
 use std::process::Command;
 
 fn start_process(call: browser::Call) -> String {
+    if call.target.trim().len() == 0 {
+        return String::from(format!("No target. URL: {}", call.url));
+    }
+
     match Command::new(call.target.clone()).arg(call.args.clone()).arg(call.url).spawn() {
         Ok(_) => String::from(call.target),
         Err(e) => String::from(format!("{} - {} - {:?}", call.target, call.args, e)),
