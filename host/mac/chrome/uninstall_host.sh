@@ -19,6 +19,6 @@ else
   fi
 fi
 
-HOST_NAME=com.google.chrome.example.echo
+HOST_NAME=eu.irgang.url_forwarder
 rm "$TARGET_DIR/com.google.chrome.example.echo.json"
 echo "Native messaging host $HOST_NAME has been uninstalled."
